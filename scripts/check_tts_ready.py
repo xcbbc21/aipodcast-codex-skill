@@ -35,7 +35,13 @@ def render_spoken_text(text: str) -> str:
     return "\n\n".join(paragraphs)
 
 
-def analyze_text(text: str, mode: str, coverage_path: str | None = None) -> dict[str, object]:
+def analyze_text(
+    text: str,
+    mode: str,
+    coverage_path: str | Path | None = None,
+    source_text: str | None = None,
+    compression_approved: bool = False,
+) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
     title_count = len(TITLE_RE.findall(text))
@@ -51,10 +57,28 @@ def analyze_text(text: str, mode: str, coverage_path: str | None = None) -> dict
         errors.append("精读模式需要逐讲覆盖表")
     if coverage_path and not Path(coverage_path).is_file():
         errors.append(f"覆盖表不存在：{coverage_path}")
+    elif mode == "fidelity" and coverage_path:
+        coverage_text = Path(coverage_path).read_text(encoding="utf-8")
+        pending = re.findall(r"待复核|未核验|未解决|\bpending\b|\bunresolved\b", coverage_text, re.I)
+        if pending:
+            errors.append(f"覆盖表仍有待复核或未解决项目：{len(pending)} 处")
     if "第一,被看见的收益" in text or "如果没有这项安排,那些人" in text:
         warnings.append("检测到旧式万能题干；请依据本讲内容重写结尾")
 
     spoken = render_spoken_text(text)
+    source_chars = None
+    compression_ratio = None
+    if source_text is not None:
+        source_chars = len(re.sub(r"\s+", "", source_text))
+        if source_chars:
+            compression_ratio = len(re.sub(r"\s+", "", spoken)) / source_chars
+            if mode == "fidelity" and compression_ratio < 0.55:
+                message = f"疑似过度压缩：口播正文约为源文的 {compression_ratio:.1%}"
+                if compression_approved:
+                    warnings.append(message + "；已记录用户批准的压缩交付")
+                else:
+                    errors.append(message + "；请核验最小语义单元或取得摘要授权")
+
     number_or_english_lines = [
         line for line in spoken.splitlines() if len(re.findall(r"[A-Za-z0-9%]", line)) >= 8
     ]
@@ -64,6 +88,8 @@ def analyze_text(text: str, mode: str, coverage_path: str | None = None) -> dict
         "title_count": title_count,
         "archive_chars": len(re.sub(r"\s+", "", text)),
         "spoken_chars": len(re.sub(r"\s+", "", spoken)),
+        "source_chars": source_chars,
+        "compression_ratio": compression_ratio,
         "dense_lines": number_or_english_lines,
         "spoken_text": spoken,
     }
@@ -74,6 +100,8 @@ def main() -> int:
     parser.add_argument("input", type=Path)
     parser.add_argument("--mode", choices=("fidelity", "authored", "adaptation"), default="authored")
     parser.add_argument("--coverage", type=Path)
+    parser.add_argument("--source", type=Path)
+    parser.add_argument("--compression-approved", action="store_true")
     parser.add_argument("--export-spoken", type=Path)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
@@ -85,6 +113,8 @@ def main() -> int:
         args.input.read_text(encoding="utf-8"),
         mode=args.mode,
         coverage_path=str(args.coverage) if args.coverage else None,
+        source_text=args.source.read_text(encoding="utf-8") if args.source else None,
+        compression_approved=args.compression_approved,
     )
     if args.export_spoken:
         args.export_spoken.write_text(str(result["spoken_text"]) + "\n", encoding="utf-8")

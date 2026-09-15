@@ -24,6 +24,12 @@ Create a companion file beside the proposed narration, for example `02-...-cover
 
 Every omitted substantive source unit needs a stated reason. Bibliographic details can remain written-only; definitions, qualifications, exceptions, and evidence that affect the conclusion cannot be silently dropped.
 
+### Completion gate
+
+“出现了同一主题”不是覆盖证据。逐项核对最小语义单元，并确保覆盖表没有“待复核、未核验、未解决”状态。存在待复核项时不得标记完成，也不得用“结构检查通过”代替内容验收。
+
+Compare the source and spoken-text sizes only as an alarm. A severe unexplained reduction is `疑似过度压缩`: return to the unit map and inspect lost reasoning, examples, counterexamples, qualifications, figures, and meaningful footnotes. Do not pad a genuinely short episode, and do not use a favorable ratio as proof of fidelity.
+
 ## Review in both directions
 
 1. Read from the source to the script. Verify that every substantive unit has an appropriate destination.

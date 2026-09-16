@@ -4,7 +4,7 @@ Read this reference only when audio is requested.
 
 ## Runtime checks
 
-Use `/Users/chuanxing/minimax_aipodcast/.venv/bin/python` as the default local interpreter, then run `scripts/preflight.py` to confirm the CLI and required flags in the current environment. Do not print API-key values.
+Run `python scripts/preflight.py` from the environment that provides `aipodcast` to confirm the CLI and required flags. To select another environment, pass `--python /path/to/python` or set `AIPODCAST_PYTHON=/path/to/python`. Do not print API-key values.
 
 The local runtime must receive the reviewed plain-text export with `--no-rescript`. Pass the text through a safe argument mechanism; do not build an unquoted shell command from narration text.
 

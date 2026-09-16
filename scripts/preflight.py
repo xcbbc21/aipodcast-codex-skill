@@ -8,28 +8,45 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Mapping
 
 
 REQUIRED_FLAGS = {"--text", "--no-rescript", "--voice", "--language", "--no-progress"}
-DEFAULT_PYTHON = Path("/Users/chuanxing/minimax_aipodcast/.venv/bin/python")
 
 
 def has_required_flags(help_text: str) -> bool:
     return all(flag in help_text for flag in REQUIRED_FLAGS)
 
 
+def resolve_python(
+    requested: Path | None,
+    *,
+    environ: Mapping[str, str] = os.environ,
+    current_python: Path = Path(sys.executable),
+) -> Path:
+    if requested is not None:
+        return requested
+    configured = environ.get("AIPODCAST_PYTHON")
+    return Path(configured) if configured else current_python
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--python", type=Path, default=DEFAULT_PYTHON)
+    parser.add_argument(
+        "--python",
+        type=Path,
+        help="interpreter to check; defaults to AIPODCAST_PYTHON or the current Python",
+    )
     args = parser.parse_args()
+    python = resolve_python(args.python)
 
     errors: list[str] = []
-    if not args.python.is_file():
-        errors.append(f"interpreter not found: {args.python}")
+    if not python.is_file():
+        errors.append(f"interpreter not found: {python}")
         help_text = ""
     else:
         result = subprocess.run(
-            [str(args.python), "-m", "aipodcast.cli", "generate", "--help"],
+            [str(python), "-m", "aipodcast.cli", "generate", "--help"],
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,

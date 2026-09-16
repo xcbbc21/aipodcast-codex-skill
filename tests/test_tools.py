@@ -7,6 +7,7 @@ from pathlib import Path
 
 from scripts.check_audio import parse_duration_seconds
 from scripts.check_tts_ready import analyze_text, render_spoken_text
+from scripts import preflight
 from scripts.preflight import has_required_flags
 
 
@@ -83,6 +84,35 @@ class AudioAndPreflightHelpersTest(unittest.TestCase):
         help_text = "--text --no-rescript --voice --language --no-progress"
         self.assertTrue(has_required_flags(help_text))
         self.assertFalse(has_required_flags("--text --voice --language"))
+
+    def _resolve_python(self, *args: object, **kwargs: object) -> Path:
+        resolver = getattr(preflight, "resolve_python", None)
+        self.assertIsNotNone(resolver, "preflight must resolve an interpreter without a user-specific path")
+        return resolver(*args, **kwargs)
+
+    def test_preflight_uses_explicit_interpreter_before_environment_or_current_python(self) -> None:
+        selected = self._resolve_python(
+            Path("/custom/python"),
+            environ={"AIPODCAST_PYTHON": "/configured/python"},
+            current_python=Path("/current/python"),
+        )
+        self.assertEqual(selected, Path("/custom/python"))
+
+    def test_preflight_uses_environment_interpreter_before_current_python(self) -> None:
+        selected = self._resolve_python(
+            None,
+            environ={"AIPODCAST_PYTHON": "/configured/python"},
+            current_python=Path("/current/python"),
+        )
+        self.assertEqual(selected, Path("/configured/python"))
+
+    def test_preflight_defaults_to_current_python_without_configuration(self) -> None:
+        selected = self._resolve_python(
+            None,
+            environ={},
+            current_python=Path("/current/python"),
+        )
+        self.assertEqual(selected, Path("/current/python"))
 
 
 if __name__ == "__main__":

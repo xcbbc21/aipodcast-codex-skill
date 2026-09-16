@@ -2,7 +2,7 @@
 
 面向中文书籍、报告、文章和已审定脚本的 Codex 单人口播技能。它把资料整理成可审计、可直接交给 TTS 的口播稿；重点处理原文覆盖、章节衔接、数字与英文读法、图表、脚注以及自然收束等问题。
 
-当前版本：[`v1.2.0`](https://github.com/xcbbc21/aipodcast-codex-skill/releases/tag/v1.2.0)
+当前版本：[`v1.2.1`](https://github.com/xcbbc21/aipodcast-codex-skill/releases/tag/v1.2.1)
 
 > 这个技能用于单人口播，不用于双人对谈播客。只有用户明确要求生成音频时，才会进入语音合成流程。
 
@@ -131,7 +131,6 @@ aipodcast/
 
 ## 版本与更新记录
 
-- 当前稳定版本：[`v1.2.0`](https://github.com/xcbbc21/aipodcast-codex-skill/releases/tag/v1.2.0)
+- 当前稳定版本：[`v1.2.1`](https://github.com/xcbbc21/aipodcast-codex-skill/releases/tag/v1.2.1)
 - 完整更新记录：[CHANGELOG.md](CHANGELOG.md)
 - GitHub 仓库：[xcbbc21/aipodcast-codex-skill](https://github.com/xcbbc21/aipodcast-codex-skill)
-

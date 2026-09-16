@@ -31,7 +31,7 @@ def main() -> int:
     errors: list[str] = []
 
     require(text, "name: aipodcast", errors)
-    require(text, 'version: "1.2.0"', errors)
+    require(text, 'version: "1.2.1"', errors)
     require(text, "原书精读", errors)
     require(text, "逐讲覆盖表", errors)
     require(text, "双向语义复核", errors)
@@ -55,7 +55,7 @@ def main() -> int:
         errors.append("missing CHANGELOG.md")
     else:
         changelog_text = changelog.read_text(encoding="utf-8")
-        require(changelog_text, "## 1.2.0 - 2026-09-16", errors)
+        require(changelog_text, "## 1.2.1 - 2026-09-16", errors)
 
     if not readme.is_file():
         errors.append("missing README.md")
@@ -67,7 +67,7 @@ def main() -> int:
         require(readme_text, "## 纯音频中的图表处理", errors)
         require(readme_text, "check_tts_ready.py", errors)
         require(readme_text, "CHANGELOG.md", errors)
-        require(readme_text, "v1.2.0", errors)
+        require(readme_text, "v1.2.1", errors)
 
     forbid(text, "常规讲 **1800-2100 字**", errors)
     forbid(text, "末尾\"三个问题\"工具", errors)

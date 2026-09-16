@@ -24,9 +24,13 @@ def main() -> int:
 
     skill = Path(sys.argv[1])
     text = skill.read_text(encoding="utf-8")
+    spoken_reference = skill.parent / "references" / "spoken-text.md"
+    spoken_text = spoken_reference.read_text(encoding="utf-8")
+    changelog = skill.parent / "CHANGELOG.md"
     errors: list[str] = []
 
     require(text, "name: aipodcast", errors)
+    require(text, 'version: "1.2.0"', errors)
     require(text, "原书精读", errors)
     require(text, "逐讲覆盖表", errors)
     require(text, "双向语义复核", errors)
@@ -34,12 +38,23 @@ def main() -> int:
     require(text, "自然收束", errors)
     require(text, "上一讲回顾", errors)
     require(text, "第一讲不强行回顾", errors)
+    require(text, "纯音频", errors)
+    require(text, "不朗读图号", errors)
     require(text, "最小语义单元", errors)
     require(text, "存在待复核项时不得标记完成", errors)
     require(text, "疑似过度压缩", errors)
     require(text, "--no-rescript", errors)
     require(text, "references/fidelity-mode.md", errors)
     require(text, "references/narration-design.md", errors)
+    require(spoken_text, "图表只是重复正文", errors)
+    require(spoken_text, "独有信息", errors)
+    require(spoken_text, "同步视频", errors)
+
+    if not changelog.is_file():
+        errors.append("missing CHANGELOG.md")
+    else:
+        changelog_text = changelog.read_text(encoding="utf-8")
+        require(changelog_text, "## 1.2.0 - 2026-09-16", errors)
 
     forbid(text, "常规讲 **1800-2100 字**", errors)
     forbid(text, "末尾\"三个问题\"工具", errors)

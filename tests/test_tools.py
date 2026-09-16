@@ -59,6 +59,21 @@ class TtsReadyChecksTest(unittest.TestCase):
         self.assertTrue(any("元信息" in item for item in result["errors"]))
         self.assertTrue(any("URL" in item for item in result["errors"]))
 
+    def test_audio_only_rejects_spoken_figure_numbers(self) -> None:
+        text = "# 第三讲\n\n见图一之五，美元储备占比持续下降。"
+        result = analyze_text(text, mode="authored")
+        self.assertTrue(any("图表编号" in item for item in result["errors"]))
+
+    def test_explicit_visual_mode_allows_figure_numbers(self) -> None:
+        text = "# 第三讲\n\n请看图一之五，美元储备占比持续下降。"
+        result = analyze_text(text, mode="authored", allow_visual_references=True)
+        self.assertEqual(result["errors"], [])
+
+    def test_audio_only_allows_semantic_chart_evidence_without_visual_navigation(self) -> None:
+        text = "# 第三讲\n\n数据显示，美元储备占比从约百分之六十五降至百分之五十七。"
+        result = analyze_text(text, mode="authored")
+        self.assertEqual(result["errors"], [])
+
 
 class AudioAndPreflightHelpersTest(unittest.TestCase):
     def test_duration_parser_accepts_afinfo_output(self) -> None:

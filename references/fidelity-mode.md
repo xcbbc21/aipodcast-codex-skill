@@ -24,6 +24,8 @@ Create a companion file beside the proposed narration, for example `02-...-cover
 
 Every omitted substantive source unit needs a stated reason. Bibliographic details can remain written-only; definitions, qualifications, exceptions, and evidence that affect the conclusion cannot be silently dropped.
 
+For pure audio, keep figure and table identifiers in this coverage record rather than in the spoken script. When a visual only repeats prose, record the treatment as `与正文重复，未单独口播`. When it contains unique evidence, map that evidence to the paragraph where it is spoken without visual navigation.
+
 ### Completion gate
 
 “出现了同一主题”不是覆盖证据。逐项核对最小语义单元，并确保覆盖表没有“待复核、未核验、未解决”状态。存在待复核项时不得标记完成，也不得用“结构检查通过”代替内容验收。

@@ -1,6 +1,8 @@
 ---
 name: aipodcast
 description: Use when turning Chinese books, reports, articles, or approved scripts into single-narrator TTS-ready narration and optional MP3 files, especially when source fidelity, page-level coverage, spoken numbers, charts, footnotes, or natural episode endings matter.
+metadata:
+  version: "1.2.0"
 ---
 
 # aipodcast
@@ -25,13 +27,15 @@ Only read [batch-production.md](references/batch-production.md) and run synthesi
 4. Use the source's information density to determine episode length. Do not pad short episodes or compress dense episodes to fit a preset word count or sentence count.
 5. 连续系列从第二讲开始，开头必须有简短的“上一讲回顾”：说清前一讲已经得到的核心结论，再指出它如何引出本讲；第一讲不强行回顾不存在的上一讲，只承担章节总起。回顾不能取代本讲的独立背景，也不能把前一讲整段重讲。
 6. End with a concise answer to the episode's central question, then use a natural close. 默认一个主思考问题，并在问题后自然收束；只有用户要求或论证确有必要时才增加追问。
-7. Keep the archival Markdown and the actual text sent to TTS separate. Do not read metadata, URLs, citation brackets, raw footnote markers, or Markdown syntax aloud.
+7. 纯音频模式下，制作时仍须核验图表；图表只是重复正文时不进入口播，含独有信息时把信息转成自然语言，但不朗读图号或视觉位置。只有用户明确要求同步视频、配套画面或可视阅读时，才保留必要的视觉指引。
+8. Keep the archival Markdown and the actual text sent to TTS separate. Do not read metadata, URLs, citation brackets, raw footnote markers, or Markdown syntax aloud.
 
 ## Hard constraints
 
 - Never overwrite a user source script. Create a new `-TTS-ready.md` file and retain the source.
 - Do not call audio synthesis unless the user requests audio.
 - In `fidelity` mode, do not call a script complete if key source pages, tables, figures, or footnotes have not been inspected.
+- 纯音频稿不得用“见图”“图一之五”“如下图”等视觉导航代替解释。图号、坐标、图例和来源可留在覆盖表或书面档案中；实际朗读文本只保留理解论证所需的信息。
 - In `fidelity` mode, 存在待复核项时不得标记完成。主题被提到不等于原书内容已覆盖；每个实质单元都必须映射到稿件位置或记录合理的省略原因。
 - Treat a large source-to-script length drop as a review trigger, not as proof of failure. When the checker reports `疑似过度压缩`, inspect the unit map and obtain explicit approval before delivering a summary instead of a complete reading script.
 - Keep `S` source material, `E` explanatory material, and `X` external extensions distinct in the coverage record. Do not present `E` or `X` as the author’s claim.
@@ -41,7 +45,7 @@ Only read [batch-production.md](references/batch-production.md) and run synthesi
 
 ## Local checks
 
-- `scripts/check_tts_ready.py INPUT.md --mode fidelity --coverage COVERAGE.md --source SOURCE.md` checks structure, unresolved coverage and suspicious compression; it can also export the text actually sent to TTS.
+- `scripts/check_tts_ready.py INPUT.md --mode fidelity --coverage COVERAGE.md --source SOURCE.md` checks structure, unresolved coverage, spoken visual references and suspicious compression; it can also export the text actually sent to TTS. Add `--allow-visual-references` only when the audience can see synchronized visuals.
 - `scripts/preflight.py` checks the local runtime only when audio is requested.
 - `scripts/check_audio.py SPOKEN.txt OUTPUT.mp3` checks decodability and reports duration and silence findings.
 

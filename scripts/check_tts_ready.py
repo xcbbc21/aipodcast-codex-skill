@@ -15,6 +15,11 @@ TITLE_RE = re.compile(r"^#\s+", re.MULTILINE)
 METADATA_RE = re.compile(r"^>\s*", re.MULTILINE)
 RAW_FOOTNOTE_RE = re.compile(r"[①②③④⑤⑥⑦⑧⑨⑩]")
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\([^)]*\)")
+VISUAL_REFERENCE_RE = re.compile(
+    r"(?:见|参见|请看|如下|上|下)\s*图(?:\s*[一二三四五六七八九十百〇零\d]+(?:\s*[-—之]\s*[一二三四五六七八九十百〇零\d]+)?)?"
+    r"|(?:图中|图上|这张图|该图)"
+    r"|图\s*[一二三四五六七八九十百〇零\d]+(?:\s*[-—之]\s*[一二三四五六七八九十百〇零\d]+)?"
+)
 
 
 def render_spoken_text(text: str) -> str:
@@ -41,6 +46,7 @@ def analyze_text(
     coverage_path: str | Path | None = None,
     source_text: str | None = None,
     compression_approved: bool = False,
+    allow_visual_references: bool = False,
 ) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -66,6 +72,12 @@ def analyze_text(
         warnings.append("检测到旧式万能题干；请依据本讲内容重写结尾")
 
     spoken = render_spoken_text(text)
+    visual_references = VISUAL_REFERENCE_RE.findall(spoken)
+    if visual_references and not allow_visual_references:
+        examples = "、".join(visual_references[:3])
+        errors.append(
+            f"纯音频稿含图表编号或视觉导航：{examples}；请改写为听得懂的证据，或在可视模式使用 --allow-visual-references"
+        )
     source_chars = None
     compression_ratio = None
     if source_text is not None:
@@ -102,6 +114,7 @@ def main() -> int:
     parser.add_argument("--coverage", type=Path)
     parser.add_argument("--source", type=Path)
     parser.add_argument("--compression-approved", action="store_true")
+    parser.add_argument("--allow-visual-references", action="store_true")
     parser.add_argument("--export-spoken", type=Path)
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
@@ -115,6 +128,7 @@ def main() -> int:
         coverage_path=str(args.coverage) if args.coverage else None,
         source_text=args.source.read_text(encoding="utf-8") if args.source else None,
         compression_approved=args.compression_approved,
+        allow_visual_references=args.allow_visual_references,
     )
     if args.export_spoken:
         args.export_spoken.write_text(str(result["spoken_text"]) + "\n", encoding="utf-8")

@@ -23,8 +23,9 @@ Only read [batch-production.md](references/batch-production.md) and run synthesi
 2. 在原书精读的 `fidelity` 模式中，先把定义、主张、推理、例证、数据、反例、限定、图表和有效脚注拆成最小语义单元，再建立逐讲覆盖表；定稿前完成双向语义复核。
 3. Write natural spoken Chinese. Keep source facts, speakers, dates, units, conditions, counterexamples, and uncertainty intact.
 4. Use the source's information density to determine episode length. Do not pad short episodes or compress dense episodes to fit a preset word count or sentence count.
-5. End with a concise answer to the episode's central question, then use a natural close. 默认一个主思考问题，并在问题后自然收束；只有用户要求或论证确有必要时才增加追问。
-6. Keep the archival Markdown and the actual text sent to TTS separate. Do not read metadata, URLs, citation brackets, raw footnote markers, or Markdown syntax aloud.
+5. 连续系列从第二讲开始，开头必须有简短的“上一讲回顾”：说清前一讲已经得到的核心结论，再指出它如何引出本讲；第一讲不强行回顾不存在的上一讲，只承担章节总起。回顾不能取代本讲的独立背景，也不能把前一讲整段重讲。
+6. End with a concise answer to the episode's central question, then use a natural close. 默认一个主思考问题，并在问题后自然收束；只有用户要求或论证确有必要时才增加追问。
+7. Keep the archival Markdown and the actual text sent to TTS separate. Do not read metadata, URLs, citation brackets, raw footnote markers, or Markdown syntax aloud.
 
 ## Hard constraints
 
@@ -35,6 +36,7 @@ Only read [batch-production.md](references/batch-production.md) and run synthesi
 - Treat a large source-to-script length drop as a review trigger, not as proof of failure. When the checker reports `疑似过度压缩`, inspect the unit map and obtain explicit approval before delivering a summary instead of a complete reading script.
 - Keep `S` source material, `E` explanatory material, and `X` external extensions distinct in the coverage record. Do not present `E` or `X` as the author’s claim.
 - Preserve the user's episode mapping and series voice choice. If there is no series choice, use `mini` only when synthesizing; do not infer a different voice from the subject matter.
+- 系列稿交付前，逐对核验第 N 讲结尾和第 N+1 讲开头：前讲的“启下”必须被后讲的“呈上”接住，承诺、结论与事实不得错位。
 - Use `--no-rescript` for local synthesis. It prevents the runtime from replacing the reviewed script.
 
 ## Local checks

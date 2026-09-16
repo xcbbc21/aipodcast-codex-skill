@@ -32,6 +32,8 @@ def main() -> int:
     require(text, "双向语义复核", errors)
     require(text, "默认一个主思考问题", errors)
     require(text, "自然收束", errors)
+    require(text, "上一讲回顾", errors)
+    require(text, "第一讲不强行回顾", errors)
     require(text, "最小语义单元", errors)
     require(text, "存在待复核项时不得标记完成", errors)
     require(text, "疑似过度压缩", errors)

@@ -1,0 +1,23 @@
+--- a/aipodcast/tts_synthesizer.py
++++ b/aipodcast/tts_synthesizer.py
+@@ -56,7 +56,11 @@
+             base = result.get("base_resp", {})
+             if base.get("status_code") == 0 and "data" in result and "audio" in result["data"]:
+                 return result["data"]["audio"]
++            err_code = base.get("status_code")
+             err = base.get("status_msg", "unknown")
++            # 配额硬错误立即失败,不再重试,避免空跑十几分钟才发现 quota 耗尽
++            if err_code in (2056, 2057):
++                raise TTSError(f"quota exhausted ({err_code}): {err}")
+             # 限流时退避更长
+             if "rate limit" in err.lower() or "rpm" in err.lower() or "1002" in err:
+                 wait = 30 if attempt == 0 else 45
+@@ -71,6 +75,8 @@
+                     time.sleep(wait)
+                 else:
+                     return None
++        except TTSError:
++            raise
+         except Exception as e:
+             wait = (2 ** attempt) * 3
+             if attempt < max_retry:

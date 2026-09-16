@@ -1,3 +1,9 @@
+
+## 1.2.1 - 2026-09-16
+
+- 新增 `patches/` 目录，存放针对本地 `minimax_aipodcast` 代码包的修复。
+- 首个补丁 `tts_synthesizer_2056_failfast.patch`：识别 MiniMax TTS API quota
+  硬错误（status_code 2056/2057），立即 fail-fast，避免空跑十几分钟才发现 quota 耗尽。
 # 更新记录
 
 本技能使用语义化版本号。

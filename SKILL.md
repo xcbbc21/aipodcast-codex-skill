@@ -2,7 +2,7 @@
 name: aipodcast
 description: Use when turning Chinese books, reports, articles, or approved scripts into single-narrator TTS-ready narration and optional MP3 files, especially when source fidelity, page-level coverage, spoken numbers, charts, footnotes, or natural episode endings matter.
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
 ---
 
 # aipodcast
